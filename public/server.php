@@ -19,6 +19,9 @@ use App\ClientManager;
 use App\SimpleMessageHandler;
 use App\SimpleLogger;
 
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 class ChatServer implements MessageComponentInterface {
     public function __construct(
         private ClientManager $clientManager,
@@ -47,6 +50,8 @@ class ChatServer implements MessageComponentInterface {
         $conn->close();
     }
 }
+
+var_dump(getenv('ENVIRONMENT')); die;
 
 // Конструктор з інжекцією залежностей (DIP)
 $clientManager = new ClientManager();
