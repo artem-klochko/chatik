@@ -18,6 +18,7 @@ use Ratchet\ConnectionInterface;
 use App\ClientManager;
 use App\SimpleMessageHandler;
 use App\SimpleLogger;
+use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -26,9 +27,10 @@ class ChatServer implements MessageComponentInterface {
     public function __construct(
         private ClientManager $clientManager,
         private SimpleMessageHandler $messageHandler,
-        private SimpleLogger $logger
+        private SimpleLogger $logger,
+        private string $port 
     ) {
-        echo "Сервер запущено!\n";
+        echo "server run at port $port!\n";
     }
 
     public function onOpen(ConnectionInterface $conn): void {
@@ -51,7 +53,7 @@ class ChatServer implements MessageComponentInterface {
     }
 }
 
-var_dump(getenv('ENVIRONMENT')); die;
+
 
 // Конструктор з інжекцією залежностей (DIP)
 $clientManager = new ClientManager();
@@ -61,10 +63,10 @@ $messageHandler = new SimpleMessageHandler($clientManager, $logger);
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
-            new ChatServer($clientManager, $messageHandler, $logger)
+            new ChatServer($clientManager, $messageHandler, $logger, $_ENV['PORT'])
         )
     ),
-    8040
+    $_ENV['PORT']
 );
 
 $server->run();
