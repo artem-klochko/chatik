@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Чат на PHP з WebSockets</title>
+    <style>
+        #chat { width: 400px; height: 300px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; }
+        input { width: 300px; }
+        button { width: 100px; }
+    </style>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Введіть повідомлення">
+    <button onclick="sendMessage()">Надіслати</button>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8040');
+
+        ws.onopen = function() {
+            document.getElementById('chat').innerHTML += '<p>З\'єднання встановлено!</p>';
+        };
+
+        ws.onmessage = function(event) {
+            document.getElementById('chat').innerHTML += '<p>' + event.data + '</p>';
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+        };
+
+        ws.onclose = function() {
+            document.getElementById('chat').innerHTML += '<p>З\'єднання закрито.</p>';
+        };
+
+        function sendMessage() {
+            const msg = document.getElementById('message').value;
+            if (msg) {
+                ws.send(msg);
+                document.getElementById('message').value = '';
+                document.getElementById('chat').innerHTML += '<p align="right">' + msg + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
