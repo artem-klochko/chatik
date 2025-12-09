@@ -1,8 +1,19 @@
+<?php
+
+const ROOT = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+require ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+?>
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Чат на PHP з WebSockets</title>
+    <title>Чатік</title>
     <style>
         #chat { width: 400px; height: 300px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; }
         input { width: 300px; }
@@ -15,10 +26,12 @@
     <button onclick="sendMessage()">Надіслати</button>
 
     <script>
-        const ws = new WebSocket('ws://localhost:8040');
+        const server = "<?php echo $_ENV['SERVER'] ?>";
+        const port = "<?php echo $_ENV['PORT'] ?>";
+        const ws = new WebSocket('ws://' + server + ':' + port);
 
         ws.onopen = function() {
-            document.getElementById('chat').innerHTML += '<p>З\'єднання встановлено!</p>';
+            document.getElementById('chat').innerHTML += '<p>Connection established!</p>';
         };
 
         ws.onmessage = function(event) {
@@ -27,7 +40,7 @@
         };
 
         ws.onclose = function() {
-            document.getElementById('chat').innerHTML += '<p>З\'єднання закрито.</p>';
+            document.getElementById('chat').innerHTML += '<p>Connection closed.</p>';
         };
 
         function sendMessage() {
